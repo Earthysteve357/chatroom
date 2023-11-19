@@ -27,7 +27,6 @@ while True:
         if sock == s:
             conn, addr = s.accept()
             clients.append((conn,addr))
-            print(conn.getpeername())
             print(addr[0] + ' connected')
         else:
             try:
