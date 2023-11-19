@@ -10,7 +10,7 @@ layout = [[sg.Multiline(default_text=text,size=(50,20),disabled=True,key='multil
           [sg.InputText(key='msg'),sg.Button('Send')]]
 window = sg.Window('Chatroom',layout)
 
-hostname = 'localhost'
+hostname = '192.168.1.161'
 port = 16556
 
 s = socket.socket()

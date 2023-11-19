@@ -3,7 +3,7 @@ import select
 import keyboard
 import random
 
-hostname = 'localhost'
+hostname = '192.168.1.161'
 port = 16556
 
 clients = []
