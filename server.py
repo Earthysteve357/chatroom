@@ -1,9 +1,7 @@
 import socket
 import select
-import keyboard
-import random
 
-hostname = '192.168.1.161'
+hostname = '192.168.1.145'
 port = 16556
 
 clients = []
@@ -29,11 +27,12 @@ while True:
         if sock == s:
             conn, addr = s.accept()
             clients.append((conn,addr))
+            print(conn.getpeername())
             print(addr[0] + ' connected')
         else:
             try:
                 msg = sock.recv(1024)
-                broadcast(msg,sock.getsockname())
-            except ConnectionResetError:
-                clients.remove((sock,sock.getsockname()))
+                broadcast(msg,sock.getpeername())
+            except (ConnectionResetError,ConnectionAbortedError):
+                clients.remove((sock,sock.getpeername()))
                 print(clients)
