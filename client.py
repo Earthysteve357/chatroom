@@ -1,6 +1,4 @@
 import socket
-import keyboard
-import random
 import select
 import PySimpleGUI as sg
 
@@ -21,7 +19,6 @@ while True:
     ready_to_read, ready_to_write, error = select.select([s],[],[],0.1)
     if not ready_to_read == []:
         msg = s.recv(1024).decode()
-        print(msg)
         text = text + msg + '\n'
         window['multiline'].update(text)
     event,values = window.read(timeout=1)
