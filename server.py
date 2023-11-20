@@ -16,7 +16,7 @@ def broadcast(msg,addr):
     msg = f'<{addr[1]}>' + msg.decode()
     msg = msg.encode()
     for client in clients:
-        if client[1] != addr: #replace None with addr to stop msg from getting sent to sender
+        if client[1] != addr:
             print(f'sending "{msg}" to client {client[1]}')
             client[0].sendall(msg)
 
