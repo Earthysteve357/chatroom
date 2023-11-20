@@ -1,7 +1,7 @@
 import socket
 import select
 
-hostname = '192.168.1.145'
+hostname = 'localhost'
 port = 16556
 
 clients = []
@@ -12,10 +12,11 @@ s.listen()
 
 
 def broadcast(msg,addr):
-    msg = f'<{addr[0]}>' + msg.decode()
+    msg = f'<{addr[1]}>' + msg.decode()
     msg = msg.encode()
     for client in clients:
-        if client[1] != None: #replace None with addr to stop msg from getting sent to sender
+        if client[1] != addr:
+            print(f'sending "{msg}" to client {client[1]}')
             client[0].sendall(msg)
 
 while True:
@@ -34,4 +35,4 @@ while True:
                 broadcast(msg,sock.getpeername())
             except (ConnectionResetError,ConnectionAbortedError):
                 clients.remove((sock,sock.getpeername()))
-                print(clients)
+                print(f'disconnecting {sock.getpeername()}')
