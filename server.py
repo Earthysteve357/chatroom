@@ -20,10 +20,13 @@ def broadcast(msg,addr):
             client[0].sendall(msg)
 
 while True:
+    client_num = 0
     client_list = []
     for client in clients:
         client_list.append(client[0])
     ready_to_read, ready_to_write, error = select.select([s,*client_list],[],[],0.1)
+    if not error == []:
+        print(error)
     for sock in ready_to_read:
         if sock == s:
             conn, addr = s.accept()
@@ -34,5 +37,8 @@ while True:
                 msg = sock.recv(1024)
                 broadcast(msg,sock.getpeername())
             except (ConnectionResetError,ConnectionAbortedError):
-                clients.remove((sock,sock.getpeername()))
+                print(clients)
+                clients.pop(client_num)
+                print(clients)
                 print(f'disconnecting {sock.getpeername()}')
+            client_num += 1
