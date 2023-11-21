@@ -18,17 +18,6 @@ def handle_client(conn,addr):
         try:
             msg = conn.recv(1024)
             print(msg)
-            '''
-            if not msg:
-                print(1)
-                print(clients)
-                # clients.remove((conn,addr))
-                index = clients.index((conn,addr))
-                clients.pop(index)
-                print(clients)
-                print(f'{addr} disconnected')
-                continue
-            '''
             print(f'"{msg}" received from {addr[1]}')
             broadcast(msg,addr)
         except ConnectionResetError:
