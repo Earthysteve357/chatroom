@@ -41,8 +41,8 @@ s.listen()
 
 while True:
     conn,addr = s.accept()
+    print(f'{addr} connected')
     conn.settimeout(0.05)
     clients.append((conn,addr))
     thread = threading.Thread(target=handle_client(conn,addr),daemon=True)
     threads.append(thread)
-    print(f'{addr} connected')
