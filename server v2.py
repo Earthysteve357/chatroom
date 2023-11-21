@@ -17,17 +17,26 @@ def handle_client(conn,addr):
     while True:
         try:
             msg = conn.recv(1024)
+            print(msg)
+            '''
             if not msg:
+                print(1)
                 print(clients)
-                clients.remove((conn,addr))
+                # clients.remove((conn,addr))
+                index = clients.index((conn,addr))
+                clients.pop(index)
                 print(clients)
                 print(f'{addr} disconnected')
                 continue
+            '''
             print(f'"{msg}" received from {addr[1]}')
             broadcast(msg,addr)
-        except TimeoutError:
-            time.sleep(1)
-            continue
+        except ConnectionResetError:
+            print(2)
+            print(clients)
+            # index = clients.index((conn,addr))
+            # clients.pop(index)
+            print(f'{addr} disconnected')
 
 hostname = 'localhost'
 port = 16556
@@ -42,7 +51,7 @@ s.listen()
 while True:
     conn,addr = s.accept()
     print(f'{addr} connected')
-    conn.settimeout(0.05)
     clients.append((conn,addr))
-    thread = threading.Thread(target=handle_client(conn,addr),daemon=True)
+    thread = threading.Thread(target=handle_client,args=(conn,addr),daemon=True)
+    thread.start()
     threads.append(thread)

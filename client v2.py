@@ -3,10 +3,15 @@ import threading
 import PySimpleGUI as sg
 
 def receive_msg():
+    global text
     while True:
-        msg = s.recv(1024).decode()
-        text = f'{text}{msg}\n'
-        window['multiline'].update(text)
+        try:
+            msg = s.recv(1024).decode()
+            text = text + msg + '\n'
+            window['multiline'].update(text)
+        except Exception:
+            print(Exception)
+
 
 text = ''
 layout = [[sg.Multiline(default_text=text,size=(50,20),disabled=True,key='multiline')],
@@ -20,12 +25,14 @@ port = 16556
 s = socket.socket()
 s.connect((hostname,port))
 
-thread = threading.Thread(target=receive_msg(),daemon=True)
+thread = threading.Thread(target=receive_msg,daemon=True)
+thread.start()
 
 while True:
     event,values = window.read()
     if event == sg.WIN_CLOSED:
         window.close()
+
         s.close()
         break
     if event == 'Send':
