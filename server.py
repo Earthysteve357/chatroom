@@ -12,7 +12,7 @@ s.listen()
 
 
 def broadcast(msg,addr):
-    msg = f'<{addr[1]}>' + msg.decode()
+    msg = f'<{addr[1]}> {msg.decode()}'
     msg = msg.encode()
     for client in clients:
         if client[1] != addr:
@@ -33,12 +33,13 @@ while True:
             clients.append((conn,addr))
             print(addr[0] + ' connected')
         else:
-            try:
-                msg = sock.recv(1024)
-                broadcast(msg,sock.getpeername())
-            except (ConnectionResetError,ConnectionAbortedError):
-                print(clients)
+            msg = sock.recv(1024)
+            if not msg:
+                print(f'{msg} caused error')
                 clients.pop(client_num)
                 print(clients)
-                print(f'disconnecting {sock.getpeername()}')
+                print(f'{sock.getpeername()} disconnected')
+                continue
+            print(f'{msg} being sent')
+            broadcast(msg,sock.getpeername())
             client_num += 1

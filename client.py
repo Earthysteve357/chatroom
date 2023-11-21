@@ -6,7 +6,7 @@ text = ''
 
 layout = [[sg.Multiline(default_text=text,size=(50,20),disabled=True,key='multiline')],
           [sg.InputText(key='msg'),sg.Button('Send')]]
-window = sg.Window('Chatroom',layout)
+window = sg.Window('Chatroom',layout,finalize=True)
 
 # hostname = socket.gethostbyname('evolved-really-tahr.ngrok-free.app')
 hostname = 'localhost'
@@ -21,7 +21,7 @@ while True:
         msg = s.recv(1024).decode()
         text = text + msg + '\n'
         window['multiline'].update(text)
-    event,values = window.read(timeout=1)
+    event,values = window.read(timeout=1000)
     if event == sg.WIN_CLOSED:
         window.close()
         s.close()
