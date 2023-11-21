@@ -32,11 +32,13 @@ def handle_client(conn,addr):
             print(f'"{msg}" received from {addr[1]}')
             broadcast(msg,addr)
         except ConnectionResetError:
-            print(2)
+            index = 0
+            while (conn,addr) != clients[index]:
+                index += 1
+            clients.pop(index)
             print(clients)
-            # index = clients.index((conn,addr))
-            # clients.pop(index)
             print(f'{addr} disconnected')
+            return
 
 hostname = 'localhost'
 port = 16556
