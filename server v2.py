@@ -4,8 +4,6 @@ import time
 
 
 def broadcast(msg,addr):
-    msg = f'<{addr[1]}>{msg.decode()}'
-    msg = msg.encode()
     print(f'preparing to send {msg}')
     for client in clients:
         print('checking for sender overlap')
@@ -29,7 +27,7 @@ def handle_client(conn,addr):
             print(f'{addr} disconnected')
             return
 
-hostname = 'localhost'
+hostname = '10.157.129.236'
 port = 16556
 
 clients = []
