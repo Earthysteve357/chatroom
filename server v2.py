@@ -27,7 +27,7 @@ def handle_client(conn,addr):
             print(f'{addr} disconnected')
             return
 
-hostname = '10.157.129.236'
+hostname = '192.168.1.174'
 port = 16556
 
 clients = []
