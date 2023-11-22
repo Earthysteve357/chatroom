@@ -18,6 +18,7 @@ def send(msg):
     print(f'sending {msg}')
     s.sendall(f'<{display_name}>{msg}'.encode())
 
+
 text = ''
 layout = [[sg.Multiline(default_text=text,size=(50,20),disabled=True,key='multiline')],
           [sg.InputText(key='msg'),sg.Button('Send')],
@@ -34,11 +35,11 @@ s.connect((hostname,port))
 display_name = s.getsockname()[1]
 window['name'].update(s.getsockname()[1])
 
-thread = threading.Thread(target=receive_msg,daemon=True)
-thread.start()
+s_thread = threading.Thread(target=receive_msg,daemon=True)
+s_thread.start()
 
 while True:
-    event,values = window.read(timeout=1000)
+    event,values = window.read(timeout=500)
     if event == sg.WIN_CLOSED:
         window.close()
         s.close()
