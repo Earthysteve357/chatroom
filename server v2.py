@@ -1,6 +1,5 @@
 import socket
 import threading
-import time
 
 
 def broadcast(msg,addr):
@@ -27,7 +26,7 @@ def handle_client(conn,addr):
             print(f'{addr} disconnected')
             return
 
-hostname = '192.168.1.174'
+hostname = socket.gethostbyname(socket.gethostname())
 port = 16556
 
 clients = []

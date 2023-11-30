@@ -11,6 +11,8 @@ def receive_msg():
         window['multiline'].update(text)
 
 def send(msg):
+    if msg == '':
+        return
     global text
     window['msg'].update('')
     text = text + f'<you>{msg}\n'
@@ -25,8 +27,8 @@ layout = [[sg.Multiline(default_text=text,size=(50,20),disabled=True,key='multil
           [sg.InputText(size=(31,1),key='name'),sg.Button('Change Display Name')]]
 window = sg.Window('Chatroom',layout,finalize=True)
 
-# hostname = socket.gethostbyname('evolved-really-tahr.ngrok-free.app')
-hostname = '192.168.1.174'
+
+hostname = 'localhost'
 port = 16556
 
 s = socket.socket()
@@ -39,6 +41,7 @@ s_thread = threading.Thread(target=receive_msg,daemon=True)
 s_thread.start()
 
 while True:
+    print('looping')
     event,values = window.read(timeout=500)
     if event == sg.WIN_CLOSED:
         window.close()
@@ -47,6 +50,7 @@ while True:
     if event == 'Send':
         send(values['msg'])
     if event == 'Change Display Name':
-        display_name = values['name']
-    if keyboard.read_key() == 'enter':
-        send(values['msg'])
+        if not len(values['name']) > 15:
+            display_name = values['name']
+    # if keyboard.read_key() == 'enter':
+    #     send(values['msg'])
