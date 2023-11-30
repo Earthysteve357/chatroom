@@ -10,7 +10,9 @@ def receive_msg():
         text = text + msg + '\n'
         window['multiline'].update(text)
 
-def send(msg):
+def send():
+    event, values = window.read(timeout=1)
+    msg = values['msg']
     if msg == '':
         return
     global text
@@ -20,6 +22,18 @@ def send(msg):
     print(f'sending {msg}')
     s.sendall(f'<{display_name}>{msg}'.encode())
 
+def update_gui():
+    global display_name
+    while True:
+        event, values = window.read()
+        if event == sg.WIN_CLOSED:
+            window.close()
+            s.close()
+        if event == 'Send':
+            send()
+        if event == 'Change Display Name':
+            if not len(values['name']) > 15:
+                display_name = values['name']
 
 text = ''
 layout = [[sg.Multiline(default_text=text,size=(50,20),disabled=True,key='multiline')],
@@ -28,7 +42,7 @@ layout = [[sg.Multiline(default_text=text,size=(50,20),disabled=True,key='multil
 window = sg.Window('Chatroom',layout,finalize=True)
 
 
-hostname = 'localhost'
+hostname = socket.gethostbyname(socket.gethostname())
 port = 16556
 
 s = socket.socket()
@@ -37,20 +51,11 @@ s.connect((hostname,port))
 display_name = s.getsockname()[1]
 window['name'].update(s.getsockname()[1])
 
-s_thread = threading.Thread(target=receive_msg,daemon=True)
-s_thread.start()
+sock_thread = threading.Thread(target=receive_msg,daemon=True)
+gui_thread = threading.Thread(target=update_gui,daemon=True)
+sock_thread.start()
+gui_thread.start()
 
 while True:
-    print('looping')
-    event,values = window.read(timeout=500)
-    if event == sg.WIN_CLOSED:
-        window.close()
-        s.close()
-        break
-    if event == 'Send':
-        send(values['msg'])
-    if event == 'Change Display Name':
-        if not len(values['name']) > 15:
-            display_name = values['name']
-    # if keyboard.read_key() == 'enter':
-    #     send(values['msg'])
+    if keyboard.read_key() == 'enter':
+        send()
