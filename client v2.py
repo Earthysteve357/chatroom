@@ -24,7 +24,7 @@ layout = [[sg.Multiline(size=(50,20),disabled=True,autoscroll=True,key='multilin
 window = sg.Window('Chatroom',layout,finalize=True)
 
 
-hostname = socket.gethostbyname(socket.gethostname())
+hostname = ''
 port = 16556
 
 s = socket.socket()
