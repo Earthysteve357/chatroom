@@ -27,6 +27,7 @@ def handle_client(conn,addr):
             return
 
 hostname = socket.gethostbyname(socket.gethostname())
+print(hostname)
 port = 16556
 
 clients = []
