@@ -17,15 +17,14 @@ def send(msg):
     print(f'sending {msg}')
     s.sendall(f'<{display_name}>{msg}'.encode())
 
+hostname = input('Enter server hostname: ')
+port = 16556
 
 layout = [[sg.Multiline(size=(50,20),disabled=True,autoscroll=True,key='multiline')],
           [sg.InputText(key='msg'),sg.Button('Send')],
           [sg.InputText(size=(31,1),key='name'),sg.Button('Change Display Name')]]
 window = sg.Window('Chatroom',layout,finalize=True)
 
-
-hostname = ''
-port = 16556
 
 s = socket.socket()
 s.connect((hostname,port))
