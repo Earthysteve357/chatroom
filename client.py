@@ -12,7 +12,7 @@ class Window:
         self.inrm_frame.textbox.pack(fill='both',expand=True)
         self.inrm_frame.message = ctk.CTkEntry(master=self.inrm_frame.frame)
         self.inrm_frame.message.pack(fill='x')
-        self.inrm_frame.button = ctk.CTkButton(master=self.inrm_frame.frame,text='Send',command=server.send(self.inrm_frame.message.get()))
+        self.inrm_frame.button = ctk.CTkButton(master=self.inrm_frame.frame,text='Send',command=server.send)
         self.inrm_frame.button.pack()
         self.newrm_frame = Frame(self.root)
         self.newrm_frame.button = ctk.CTkButton(master=self.newrm_frame.frame, text='Create Room',command=server.createrm_thread.start).grid(row=0,column=1)
@@ -41,9 +41,7 @@ class Connection:
         self.server = socket.socket()
         self.server.connect((hostname,port))
         self.createrm_thread = threading.Thread(target=self.createrm)
-        print('ready to recive')
         self.rooms = self.server.recv(1024)
-        print('recieved')
         self.rooms = (self.rooms).decode()
         self.rooms = self.rooms.split(',')
         x = 0
@@ -51,29 +49,30 @@ class Connection:
             room = room.strip()
             self.rooms[x] = room
             x += 1
-        print('done')
     def createrm(self):
         name = window.newrm_frame.name.get()
         name = name.strip()
         password = window.newrm_frame.password.get()
         password = password.strip()
-        if name == '' and not password == '':
-            
-            return
-        else:
-            print(name,password)
-            self.server.sendall('0'.encode())
-            self.server.sendall(name.encode())
-            self.server.recv(1)
-            self.server.sendall(password.encode())
-            self.server.recv(1)
-            response = int(self.server.recv(1).decode())
-            print(response)
-            window.root.wm_title(f'Chatroom - {name}')
-            window.newrm_frame.frame.pack_forget()
-            window.joinrm_frame.frame.pack_forget()
-            window.inrm_frame.frame.pack(fill='both',expand=True)
-    def send(self,msg):
+        if name.find('[') or name.find(']') or name.find(',') or name.find("'"):
+            if name == '' or password == '':
+                return
+            else:
+                print(name,password)
+                self.server.sendall('0'.encode())
+                self.server.sendall(name.encode())
+                self.server.recv(1)
+                self.server.sendall(password.encode())
+                self.server.recv(1)
+                response = int(self.server.recv(1).decode())
+                print(response)
+                window.root.wm_title(f'Chatroom - {name}')
+                window.newrm_frame.frame.pack_forget()
+                window.joinrm_frame.frame.pack_forget()
+                window.inrm_frame.frame.pack(fill='both',expand=True)
+    def send(self):
+        msg = window.inrm_frame.message.get()
+        window.inrm_frame.message.delete(0,'end')
         print(msg)
     def listen(self):
         while True:
