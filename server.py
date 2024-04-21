@@ -24,7 +24,10 @@ class Server:
             room_names = room_names.replace(']', '').encode()
             length = len(room_names)
             print(room_names)
-            conn.sendall('[0]'.encode())#(room_names)
+            if room_names == b'':
+                conn.sendall('[0]'.encode())
+            else:
+                conn.sendall(room_names)
             choice = int(conn.recv(1024).decode())
             if choice == 0:
                 name = conn.recv(1024).decode()

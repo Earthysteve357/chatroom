@@ -25,7 +25,7 @@ class Window:
         self.newrm_frame.password = ctk.CTkEntry(master=self.newrm_frame.frame,show='*')
         self.newrm_frame.password.grid(row=2,column=1)
         self.joinrm_frame = Frame(self.root)
-        self.joinrm_frame.button = ctk.CTkButton(master=self.joinrm_frame.frame,text='Join Room').grid(row=0,column=0)
+        self.joinrm_frame.button = ctk.CTkButton(master=self.joinrm_frame.frame,text='Join Room',command=server.joinrm).grid(row=0,column=0)
         if server.rooms == '[0]':
             self.joinrm_frame.menu = ctk.CTkOptionMenu(master=self.joinrm_frame.frame, values=['No Rooms'],state='disabled')
         else:
@@ -57,6 +57,14 @@ class Connection:
                 room = room.strip()
                 self.rooms[x] = room
                 x += 1
+    def joinrm(self):
+        room = window.joinrm_frame.menu.get()
+        password = window.joinrm_frame.password.get().strip()
+        if password == '':
+            return
+        else:
+            print(room,password)
+            self.server.sendall('1'.encode())
     def createrm(self):
         name = window.newrm_frame.name.get()
         name = name.strip()
