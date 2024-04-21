@@ -46,6 +46,7 @@ class Connection:
         self.server = socket.socket()
         self.server.connect((hostname,port))
         self.createrm_thread = threading.Thread(target=self.createrm)
+        self.listener = threading.Thread(target=self.listen)
         self.rooms = self.server.recv(1024)
         self.rooms = (self.rooms).decode()
         if self.rooms == '[0]':
@@ -63,8 +64,18 @@ class Connection:
         if password == '':
             return
         else:
-            print(room,password)
             self.server.sendall('1'.encode())
+            self.server.recv(1)
+            self.server.sendall(room.encode())
+            self.server.recv(1)
+            self.server.sendall(password.encode())
+            status = int(self.server.recv(1).decode())
+            if status == 1:
+                window.root.wm_title(f'Chatroom - {room}')
+                window.newrm_frame.frame.pack_forget()
+                window.joinrm_frame.frame.pack_forget()
+                window.inrm_frame.frame.pack(fill='both',expand=True)
+                self.listener.start()
     def createrm(self):
         name = window.newrm_frame.name.get()
         name = name.strip()
@@ -74,31 +85,33 @@ class Connection:
             if name == '' or password == '':
                 return
             else:
-                print(name,password)
                 self.server.sendall('0'.encode())
+                self.server.recv(1)
                 self.server.sendall(name.encode())
                 self.server.recv(1)
                 self.server.sendall(password.encode())
                 self.server.recv(1)
-                response = int(self.server.recv(1).decode())
-                print(response)
                 window.root.wm_title(f'Chatroom - {name}')
                 window.newrm_frame.frame.pack_forget()
                 window.joinrm_frame.frame.pack_forget()
                 window.inrm_frame.frame.pack(fill='both',expand=True)
+                self.listener.start()
     def send(self):
         msg = window.inrm_frame.message.get()
         msg = msg.strip()
-        window.inrm_frame.message.delete(0,END)
-        window.inrm_frame.textbox.configure(state='normal')
-        window.inrm_frame.textbox.insert(END,'<you>'+msg+'\n','right')
-        window.inrm_frame.textbox.configure(state='disabled')
-        self.server.sendall(msg.encode())
+        if not msg == '':
+            window.inrm_frame.message.delete(0,END)
+            window.inrm_frame.textbox.configure(state='normal')
+            window.inrm_frame.textbox.insert(END,'<you>'+msg+'\n','right')
+            window.inrm_frame.textbox.configure(state='disabled')
+            self.server.sendall(msg.encode())
     def listen(self):
         while True:
-            data = self.server.recv(1024)
+            data = self.server.recv(1024).decode()
             if not data == '':
-                print(data)
+                window.inrm_frame.textbox.configure(state='normal')
+                window.inrm_frame.textbox.insert(END,data+'\n')
+                window.inrm_frame.textbox.configure(state='disabled')
 
 server = Connection('localhost',16556)
 window = Window(350, 500)
